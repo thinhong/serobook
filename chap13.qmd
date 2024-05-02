@@ -70,3 +70,9 @@ ggplot(df, aes(x = brthyr, y = p)) +
 geom_point()
 ```
 
+Relationship between seroprevalence and shifted birth year
+
+```{r}
+ggplot(df, aes(x = x, y = p)) +
+geom_point()
+```
