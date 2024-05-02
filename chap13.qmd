@@ -1,0 +1,72 @@
+---
+title: "Chapter 13"
+---
+
+```{r, message = F}
+library(mgcv)
+library(ggplot2)
+
+tbdata <- read.table("data/tb.dat", header = T)
+attach(tbdata)
+a=AGE
+x=BRTHYR-min(BRTHYR)
+g=SEX
+s=PPD
+p=s/N
+f=N-s
+y=cbind(s,f)
+```
+
+Fit model with shifted year of birth
+
+```{r}
+gamfit5 <- gam(y ~ s(a) + x * g, family = binomial(link = "cloglog"))
+```
+
+Fit model with year of birth (BRTHYR)
+
+```{r}
+gamfit6 <- gam(y ~ s(a) + BRTHYR * g, family = binomial(link = "cloglog"))
+```
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r, echo = F}
+vis.gam(gamfit5,view=c("a","x"),cond=list(g=0),labcex=0.8,type="response",plot.type="contour",color="bw",too.far=0.15,xlab="age", ylab="(shifted) year of birth",main=" ") 
+points(a[g==0],x[g==0],cex=100*p[g==0],lwd=2)
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r, echo = F}
+vis.gam(gamfit6,view=c("a","BRTHYR"),cond=list(g=0),labcex=0.8,type="response",plot.type="contour",color="bw",too.far=0.15,xlab="age", ylab="year of birth",main=" ") 
+points(a[g==0],BRTHYR[g==0],cex=100*p[g==0],lwd=2)
+```
+
+:::
+
+::::
+
+```{r}
+df <- data.frame(age = a, p = p, x = x, brthyr = BRTHYR, s = s, n = N)
+```
+
+Relationship between seroprevalence and age
+
+```{r}
+ggplot(df, aes(x = age, y = p)) +
+geom_point()
+```
+
+
+Relationship between seroprevalence and time
+
+```{r}
+ggplot(df, aes(x = brthyr, y = p)) +
+geom_point()
+```
+
